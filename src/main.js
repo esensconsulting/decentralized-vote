@@ -6,6 +6,7 @@ import Web3 from 'web3'
 import router from './router'
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
+import store from './store'
 
 Vue.use(Vuetify, {
   theme: {
@@ -32,6 +33,7 @@ window.addEventListener('load', function () {
   new Vue({
     el: '#app',
     router,
+    store,
     template: '<App/>',
     components: { App }
   })

@@ -1,14 +1,17 @@
 <template>
-  <section id='signup'>
-    <h1>Sign up</h1>
-    <div class="form">
-      <div class="entry">
-        <button @click="signup" name="signup">Sign up</button>
-        <input name="pseudo" v-model="form.pseudo">
-        <label for="pseudo">Pseudo</label>
-      </div>
-    </div>
-  </section>
+  <v-container class="dashboard" fluid>
+    <v-layout row>
+      <v-flex md4 offset-md4>
+        <v-layout row>
+          <v-text-field prepend-icon="person" name="pseudo" label="Pseudo" type="text"
+                        v-model="form.pseudo" />
+        </v-layout>
+        <v-layout row>
+          <v-btn block @click="signup" name="signup" dark color="red">Sign up</v-btn>
+        </v-layout>
+      </v-flex>
+    </v-layout>
+  </v-container>
 </template>
 
 <script>
@@ -43,32 +46,5 @@
 </script>
 
 <style lang="scss" scoped>
-
-  #signup {
-    text-align: center;
-    
-    .form {
-      display: flex;
-      flex-direction: column;
-      margin: auto;
-      
-      .entry {
-        display: flex;
-        flex-direction: row-reverse;
-        justify-content: center;
-        
-        label {
-          margin-right: 20px
-        }
-        
-        button {
-          margin-left: 20px
-        }  
-        
-      }
-        
-    }
-    
-  }
 
 </style>

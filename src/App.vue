@@ -1,6 +1,7 @@
 <template>
   <v-app id="inspire">
     <v-navigation-drawer
+      v-if="this.$store.state.connectedUser.isLogged"
       temporary
       fixed
       clipped
@@ -14,7 +15,7 @@
               <img src="./assets/logo.png">
             </v-list-tile-avatar>
             <v-list-tile-content>
-              <v-list-tile-title class="aside-title">Utilisateur</v-list-tile-title>
+              <v-list-tile-title class="aside-title">{{this.$store.state.connectedUser.login}}</v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
         </v-list>
@@ -39,7 +40,7 @@
       </v-list>
     </v-navigation-drawer>
     <v-toolbar dark clipped-left absolute app>
-      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+      <v-toolbar-side-icon v-if="this.$store.state.connectedUser.isLogged" @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <img src="./assets/esens-logo.svg">
       <v-toolbar-title>Votesens</v-toolbar-title>
     </v-toolbar>
