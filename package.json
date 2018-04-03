@@ -1,8 +1,8 @@
 {
-  "name": "truffle-vue",
-  "version": "0.2.0",
-  "description": "A vue.js truffle box",
-  "author": "osarrouy <olivier.sarrouy@gmail.com>",
+  "name": "decentralized-vote",
+  "version": "0.0.1",
+  "description": "Decentralized vote by Esens",
+  "author": "anthonymq <amarques@esensconsulting.com>",
   "private": true,
   "scripts": {
     "dev": "node scripts/dev-server.js",
