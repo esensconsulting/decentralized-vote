@@ -8,12 +8,16 @@ const store = new Vuex.Store({
     connectedUser: {
       isLogged: false,
       login: null
-    }
+    },
+    isLoading: false
   },
   mutations: {
     setConnectedUserLogin (state, newLogin) {
       state.connectedUser.login = newLogin
       state.connectedUser.isLogged = true
+    },
+    setLoading (state, status) {
+      state.isLoading = status
     }
   }
 })

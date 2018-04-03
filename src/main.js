@@ -7,6 +7,7 @@ import router from './router'
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
 import store from './store'
+import Users from '@/js/users'
 
 Vue.use(Vuetify, {
   theme: {
@@ -23,6 +24,21 @@ window.addEventListener('load', function () {
   if (typeof web3 !== 'undefined') {
     console.log('Web3 injected browser: OK.')
     window.web3 = new Web3(window.web3.currentProvider)
+    // window.web3.eth.getAccounts().then(accounts => {
+    Vue.prototype.$account = window.web3.eth.accounts[0]
+
+    store.commit('setLoading', true)
+    Users.init().then(() => {
+      Users.exists(Vue.prototype.$account).then(exist => {
+        if (exist) {
+          Users.authenticate().then(pseudo => {
+            store.commit('setConnectedUserLogin', pseudo)
+          })
+        }
+        store.commit('setLoading', false)
+      })
+    })
+    // })
   } else {
     console.log('Web3 injected browser: Fail. You should consider trying MetaMask.')
     // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
@@ -35,7 +51,7 @@ window.addEventListener('load', function () {
     router,
     store,
     template: '<App/>',
-    components: { App }
+    components: {App}
   })
 })
 
