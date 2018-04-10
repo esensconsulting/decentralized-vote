@@ -1,24 +1,16 @@
 <template>
-  <v-container fluid>
-    <v-layout>
-      <v-flex md12>
-        <scrutin v-for="index in scrutinLength" :scrutinId="index-1"></scrutin>
-      </v-flex>
-    </v-layout>
-  </v-container>
+
 </template>
 
 <script>
   import EsensVote from '@/js/esensVote'
-  import Scrutin from './Scrutin.vue'
 
   export default {
-    name: 'dashboard',
-    components: {Scrutin},
+    name: 'propositions',
+    props: ['scrutinId'],
     data () {
       return {
-        msg: 'Welcome to your truffle-vue dApp',
-        scrutinLength: 0
+        name: ''
       }
     },
     computed: {},
@@ -26,8 +18,8 @@
     mounted: function () {
       let self = this
       EsensVote.init().then(() => {
-        EsensVote.getScrutinLength().then(length => {
-          self.scrutinLength = length
+        EsensVote.getPropositionsIdByScrutinId(self.scrutinId).then((ids) => {
+          console.log(ids)
         })
       })
     }

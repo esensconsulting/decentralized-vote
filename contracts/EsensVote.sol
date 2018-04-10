@@ -19,7 +19,7 @@ contract EsensVote {
     uint counter;
   }
 
-  Scrutin[] scrutins;
+  Scrutin[] public scrutins;
   Proposition[] propositions;
   Vote[] private votes;
 
@@ -29,6 +29,10 @@ contract EsensVote {
     scrutins.push(Scrutin('Presidentielle', msg.sender, false));
     propositions.push(Proposition(0, 'Macron', 0));
     propositions.push(Proposition(0, 'Le Pen', 0));
+  }
+
+  function getScrutinLength() public view returns (uint){
+    return scrutins.length;
   }
 
   function createScrutin(bytes32 _name, bool _isOpenToProposal) public returns (uint) {
