@@ -85,12 +85,12 @@ contract EsensVote {
     return result;
   }
 
-  function getPropositionByScrutinIdAndPropositionId(uint _scrutinId, uint _propositionId) public view returns (uint, bytes32, uint) {
+  function getPropositionByScrutinIdAndPropositionId(uint _scrutinId, uint _propositionId) public view returns (bytes32, uint) {
     Proposition storage proposition = propositions[_propositionId];
     require(proposition.scrutinId == _scrutinId);
     bytes32 description = proposition.description;
     uint counter = proposition.counter;
-    return (_scrutinId, description, counter);
+    return (description, counter);
   }
 
 }

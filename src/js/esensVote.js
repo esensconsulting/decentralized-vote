@@ -63,6 +63,21 @@ const EsensVote = {
         reject(err)
       })
     })
+  },
+
+  getPropositionByScrutinIdAndPropositionId: function (scrutinId, propositionId) {
+    let self = this
+
+    return new Promise((resolve, reject) => {
+      self.instance.getPropositionByScrutinIdAndPropositionId.call(scrutinId,
+        propositionId,
+        {from: window.web3.eth.accounts[0]}
+      ).then(proposition => {
+        resolve(proposition)
+      }).catch(err => {
+        reject(err)
+      })
+    })
   }
 }
 
