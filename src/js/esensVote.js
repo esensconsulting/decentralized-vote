@@ -78,6 +78,34 @@ const EsensVote = {
         reject(err)
       })
     })
+  },
+
+  submitVote: function (propositionId) {
+    let self = this
+
+    return new Promise((resolve, reject) => {
+      self.instance.submitVote.call(propositionId,
+        {from: window.web3.eth.accounts[0]}
+      ).then((msg) => {
+        resolve(msg)
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+
+  getVoteCountByScrutinId: function (scrutinId) {
+    let self = this
+
+    return new Promise((resolve, reject) => {
+      self.instance.getVoteCountByScrutinId.call(scrutinId,
+        {from: window.web3.eth.accounts[0]}
+      ).then((countVoteScrutin) => {
+        resolve(countVoteScrutin)
+      }).catch(err => {
+        reject(err)
+      })
+    })
   }
 }
 
