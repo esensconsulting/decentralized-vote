@@ -1,5 +1,6 @@
 import contract from 'truffle-contract'
 import EsensVoteContract from '@contracts/EsensVote.json'
+import Vue from 'vue'
 
 const EsensVote = {
 
@@ -28,7 +29,7 @@ const EsensVote = {
 
     return new Promise((resolve, reject) => {
       self.instance.getScrutinLength.call(
-        {from: window.web3.eth.accounts[0]}
+        {from: Vue.prototype.$account}
       ).then(length => {
         resolve(length.c[0])
       }).catch(err => {
@@ -42,7 +43,7 @@ const EsensVote = {
 
     return new Promise((resolve, reject) => {
       self.instance.scrutins.call(id,
-        {from: window.web3.eth.accounts[0]}
+        {from: Vue.prototype.$account}
       ).then(name => {
         resolve(window.web3.utils.toAscii(name[0]))
       }).catch(err => {
@@ -56,7 +57,7 @@ const EsensVote = {
 
     return new Promise((resolve, reject) => {
       self.instance.getPropositionsIdByScrutinId.call(id,
-        {from: window.web3.eth.accounts[0]}
+        {from: Vue.prototype.$account}
       ).then(ids => {
         resolve(ids)
       }).catch(err => {
@@ -71,7 +72,7 @@ const EsensVote = {
     return new Promise((resolve, reject) => {
       self.instance.getPropositionByScrutinIdAndPropositionId.call(scrutinId,
         propositionId,
-        {from: window.web3.eth.accounts[0]}
+        {from: Vue.prototype.$account}
       ).then(proposition => {
         resolve(proposition)
       }).catch(err => {
@@ -84,8 +85,8 @@ const EsensVote = {
     let self = this
 
     return new Promise((resolve, reject) => {
-      self.instance.submitVote.call(propositionId,
-        {from: window.web3.eth.accounts[0]}
+      self.instance.submitVote(propositionId,
+        {from: Vue.prototype.$account}
       ).then((msg) => {
         resolve(msg)
       }).catch(err => {
@@ -99,7 +100,7 @@ const EsensVote = {
 
     return new Promise((resolve, reject) => {
       self.instance.getVoteCountByScrutinId.call(scrutinId,
-        {from: window.web3.eth.accounts[0]}
+        {from: Vue.prototype.$account}
       ).then((countVoteScrutin) => {
         resolve(countVoteScrutin)
       }).catch(err => {

@@ -1,5 +1,6 @@
 import contract from 'truffle-contract'
 import UsersContract from '@contracts/Users.json'
+import Vue from 'vue'
 
 const Users = {
 
@@ -29,7 +30,7 @@ const Users = {
     return new Promise((resolve, reject) => {
       self.instance.exists.call(
         address || window.web3.eth.defaultAccount,
-        {from: window.web3.eth.accounts[0]}
+        {from: Vue.prototype.$account}
       ).then(exists => {
         resolve(exists)
       }).catch(err => {
@@ -43,7 +44,7 @@ const Users = {
 
     return new Promise((resolve, reject) => {
       self.instance.authenticate.call(
-        {from: window.web3.eth.accounts[0]}
+        {from: Vue.prototype.$account}
       ).then(pseudo => {
         resolve(window.web3.toUtf8(pseudo))
       }).catch(err => {
@@ -58,7 +59,7 @@ const Users = {
     return new Promise((resolve, reject) => {
       self.instance.create(
         pseudo,
-        {from: window.web3.eth.accounts[0]}
+        {from: Vue.prototype.$account}
       ).then(tx => {
         resolve(tx)
       }).catch(err => {
@@ -72,7 +73,7 @@ const Users = {
 
     return new Promise((resolve, reject) => {
       self.instance.destroy(
-        {from: window.web3.eth.accounts[0]}
+        {from: Vue.prototype.$account}
       ).then(tx => {
         resolve(tx)
       }).catch(err => {

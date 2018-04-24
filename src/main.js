@@ -25,17 +25,18 @@ window.addEventListener('load', function () {
     console.log('Web3 injected browser: OK.')
     window.web3 = new Web3(window.web3.currentProvider)
     // window.web3.eth.getAccounts().then(accounts => {
-    Vue.prototype.$account = window.web3.eth.accounts[0]
-
     store.commit('setLoading', true)
-    Users.init().then(() => {
-      Users.exists(Vue.prototype.$account).then(exist => {
-        if (exist) {
-          Users.authenticate().then(pseudo => {
-            store.commit('setConnectedUserLogin', pseudo)
-          })
-        }
-        store.commit('setLoading', false)
+    window.web3.eth.getAccounts().then(accounts => {
+      Vue.prototype.$account = accounts[0]
+      Users.init().then(() => {
+        Users.exists(Vue.prototype.$account).then(exist => {
+          if (exist) {
+            Users.authenticate().then(pseudo => {
+              store.commit('setConnectedUserLogin', pseudo)
+            })
+          }
+          store.commit('setLoading', false)
+        })
       })
     })
     // })
