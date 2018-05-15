@@ -4,6 +4,7 @@ contract EsensVote {
   struct Scrutin {
     bytes32 name;
     address scrutinOwner;
+    bool isVisibleResult;
     bool isOpenToProposal;
   }
 
@@ -26,7 +27,7 @@ contract EsensVote {
   event VoteSubmitted(uint _scrutinId, uint _propositionId);
 
   function EsensVote() public {
-    scrutins.push(Scrutin('Presidentielle', msg.sender, false));
+    scrutins.push(Scrutin('Presidentielle', msg.sender, true, false));
     propositions.push(Proposition(0, 'Macron', 0));
     propositions.push(Proposition(0, 'Le Pen', 0));
   }
@@ -35,8 +36,17 @@ contract EsensVote {
     return scrutins.length;
   }
 
-  function createScrutin(bytes32 _name, bool _isOpenToProposal) public returns (uint) {
-    return scrutins.push(Scrutin(_name, msg.sender, _isOpenToProposal)) - 1;
+  function createScrutin(bytes32 _name, bool _isVisibleResult, bool _isOpenToProposal) public returns (uint) {
+    return scrutins.push(Scrutin(_name, msg.sender, _isVisibleResult, _isOpenToProposal)) - 1;
+  }
+
+  function isAdmin(uint _scrutinId) public returns (bool) {
+    return scrutins[_scrutinId].scrutinOwner == msg.sender;
+  }
+
+  function updateScrutinVisible(uint _scrutinId, bool _isVisibleResult) public {
+    require(scrutins[_scrutinId].scrutinOwner == msg.sender);
+    scrutins[_scrutinId].isVisibleResult = _isVisibleResult;
   }
 
   function createProposal(uint _scrutinId, bytes32 _description) public {
@@ -89,7 +99,10 @@ contract EsensVote {
     Proposition storage proposition = propositions[_propositionId];
     require(proposition.scrutinId == _scrutinId);
     bytes32 description = proposition.description;
-    uint counter = proposition.counter;
+    uint counter = 0;
+    if (scrutins[_scrutinId].isVisibleResult == true) {
+      counter = proposition.counter;
+    }
     return (description, counter);
   }
 
