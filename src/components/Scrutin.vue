@@ -2,10 +2,15 @@
   <v-container>
     <v-layout row wrap>
       <v-flex xs12 lg6 mb-3>
-        <v-card>
+        <v-card v-bind:class="{'is-already-vote-layout': isAlreadyVote }">
           <v-card-title primary-title class="justify-space-between">
-            <div class="headline">
-              {{name}}
+            <div>
+              <span class="headline">
+                {{name}}
+              </span>
+              <span v-if="isAlreadyVote">
+                  (Déja voté)
+              </span>
             </div>
             <div align-end>
               <v-btn icon v-if="isAdmin">
@@ -18,8 +23,7 @@
           </v-card-title>
           <v-slide-y-transition>
             <v-card-text v-if="showProposition">
-              <Propositions :scrutinId="scrutinId"></Propositions>
-              <Propositions :isVisibleResult="isVisibleResult"></Propositions>
+              <Propositions :scrutinId="scrutinId" :isVisibleResult="isVisibleResult"></Propositions>
             </v-card-text>
           </v-slide-y-transition>
         </v-card>
@@ -41,14 +45,26 @@
         name: '',
         isVisibleResult: false,
         isAdmin: false,
-        showProposition: false
+        showProposition: false,
+        isAlreadyVote: false
       }
     },
     computed: {},
-    methods: {},
+    methods: {
+      getPropositionIdIfUserHasAlreadyVotedOnScrutinId () {
+        if (this.scrutinId !== undefined) {
+          EsensVote.getPropositionIdIfUserHasAlreadyVotedOnScrutinId(this.scrutinId).then(propositionId => {
+            if (propositionId !== -1) {
+              this.isAlreadyVote = true
+            }
+          })
+        }
+      }
+    },
     mounted: function () {
       let self = this
       EsensVote.init().then(() => {
+        this.getPropositionIdIfUserHasAlreadyVotedOnScrutinId()
         EsensVote.getScrutinId(self.scrutinId).then((scrutin) => {
           self.name = window.web3.utils.toAscii(scrutin[0])
           self.isVisibleResult = scrutin[2]
@@ -80,5 +96,9 @@
 
   a {
     color: #42b983;
+  }
+
+  .is-already-vote-layout{
+    background-color: #90CAF9;
   }
 </style>

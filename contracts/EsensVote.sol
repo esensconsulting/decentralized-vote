@@ -30,6 +30,7 @@ contract EsensVote {
     scrutins.push(Scrutin('Presidentielle', msg.sender, true, false));
     propositions.push(Proposition(0, 'Macron', 0));
     propositions.push(Proposition(0, 'Le Pen', 0));
+    propositions.push(Proposition(0, 'Esens', 0));
   }
 
   function getScrutinLength() public view returns (uint){
