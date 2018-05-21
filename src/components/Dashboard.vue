@@ -1,24 +1,33 @@
 <template>
-  <v-container fluid>
-    <v-layout>
-      <v-flex md12>
-        <scrutin v-for="scrutin in this.$store.state.scrutins" :key="scrutin.scrutinId" :scrutin="scrutin"/>
-      </v-flex>
-    </v-layout>
+  <v-container grid-list-xl>
+        <v-layout row wrap>
+          <add-scrutin></add-scrutin>
+          <scrutin v-for="scrutin in reverseScrutins" :key="scrutin.scrutinId" :scrutin="scrutin"/>
+        </v-layout>
   </v-container>
 </template>
 
 <script>
   import EsensVote from '@/js/esensVote'
-  import Scrutin from './Scrutin.vue'
+  import Scrutin from './Scrutin/Scrutin.vue'
+  import AddScrutin from './Scrutin/AddScrutin.vue'
 
   export default {
     name: 'dashboard',
-    components: {Scrutin},
+    components: {Scrutin, AddScrutin},
     data () {
       return {}
     },
-    computed: {},
+    computed: {
+      reverseScrutins () {
+        let resultScrutins = []
+        let scrutins = this.$store.state.scrutins
+        Object.keys(scrutins).sort().reverse().forEach((key) => {
+          resultScrutins.push(scrutins[key])
+        })
+        return resultScrutins
+      }
+    },
     methods: {
       watchScrutinCreated () {
         let self = this
