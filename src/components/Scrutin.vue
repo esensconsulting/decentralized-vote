@@ -2,13 +2,13 @@
   <v-container>
     <v-layout row wrap>
       <v-flex xs12 lg6 mb-3>
-        <v-card v-bind:class="{'is-already-vote-layout': isAlreadyVote }">
+        <v-card v-bind:class="{'is-already-vote-layout': scrutin.isAlreadyVoted  }">
           <v-card-title primary-title class="justify-space-between">
             <div>
               <span class="headline">
-                {{name}}
+                {{scrutin.name}}
               </span>
-              <span v-if="isAlreadyVote">
+              <span v-if="scrutin.isAlreadyVoted ">
                   (Déja voté)
               </span>
             </div>
@@ -23,7 +23,7 @@
           </v-card-title>
           <v-slide-y-transition>
             <v-card-text v-if="showProposition">
-              <Propositions :scrutinId="scrutinId" :isVisibleResult="isVisibleResult"></Propositions>
+              <Propositions :scrutin="scrutin"></Propositions>
             </v-card-text>
           </v-slide-y-transition>
         </v-card>
@@ -38,38 +38,20 @@
 
   export default {
     name: 'scrutin',
-    props: ['scrutinId'],
+    props: ['scrutin'],
     components: {Propositions},
     data () {
       return {
-        name: '',
-        isVisibleResult: false,
         isAdmin: false,
-        showProposition: false,
-        isAlreadyVote: false
+        showProposition: false
       }
     },
     computed: {},
-    methods: {
-      getPropositionIdIfUserHasAlreadyVotedOnScrutinId () {
-        if (this.scrutinId !== undefined) {
-          EsensVote.getPropositionIdIfUserHasAlreadyVotedOnScrutinId(this.scrutinId).then(propositionId => {
-            if (propositionId !== -1) {
-              this.isAlreadyVote = true
-            }
-          })
-        }
-      }
-    },
+    methods: {},
     mounted: function () {
       let self = this
       EsensVote.init().then(() => {
-        this.getPropositionIdIfUserHasAlreadyVotedOnScrutinId()
-        EsensVote.getScrutinId(self.scrutinId).then((scrutin) => {
-          self.name = window.web3.utils.toAscii(scrutin[0])
-          self.isVisibleResult = scrutin[2]
-        })
-        EsensVote.isAdmin(self.scrutinId).then((isAdmin) => {
+        EsensVote.isAdmin(this.scrutin.scrutinId).then((isAdmin) => {
           self.isAdmin = isAdmin
         })
       })

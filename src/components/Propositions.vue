@@ -1,17 +1,17 @@
 <template>
   <div>
-    <v-list v-bind:class="{'is-already-vote-layout': isAlreadyVote }">
+    <v-list v-bind:class="{'is-already-vote-layout': scrutin.isAlreadyVoted }">
       <v-list-tile href='javascript:;'
-                   v-on:click='submitVote(proposition[2])'
-                   v-for='proposition in propositions'
-                   :key="proposition[2]"
+                   v-on:click='submitVote(proposition.propositionId)'
+                   v-for='proposition in getPropositions'
+                   :key="proposition.propositionId"
                    v-bind:data="proposition">
         <v-list-tile-content>
           <v-list-tile-title>
-            <v-icon v-if="propositionIdAlreadyVote === proposition[2]">done</v-icon>
-            {{proposition[0]}}
+            <v-icon v-if="proposition.isAlreadyVoted">done</v-icon>
+            {{proposition.description}}
           </v-list-tile-title>
-          <v-list-tile-sub-title v-if='isVisibleResult'>Résultat : {{proposition[1]}}</v-list-tile-sub-title>
+          <v-list-tile-sub-title v-if='scrutin.isVisibleResult'>Résultat : {{proposition.vote}}</v-list-tile-sub-title>
         </v-list-tile-content>
       </v-list-tile>
     </v-list>
@@ -35,25 +35,26 @@
   export default {
     components: {},
     name: 'propositions',
-    props: ['scrutinId', 'isVisibleResult'],
+    props: ['scrutin'],
     data () {
       return {
         name: '',
-        propositions: [],
-        propositionIdAlreadyVote: -1,
         showSnackBar: false,
         colorSnackBar: '',
-        textSnackBar: '',
-        isAlreadyVote: false
+        textSnackBar: ''
       }
     },
-    computed: {},
+    computed: {
+      getPropositions () {
+        return this.scrutin.propositions
+      }
+    },
     methods: {
       submitVote (propositionId) {
-        if (!this.isAlreadyVote) {
+        if (!this.scrutin.isAlreadyVoted) {
           EsensVote.submitVote(propositionId).then(() => {
-            this.setAlreadyVoteAndPropositionAlreadyVote(propositionId)
-            this.addCounterInPropositionByPropositionId(propositionId)
+            this.scrutin.isAlreadyVoted = true
+            this.getPropositions[propositionId].isAlreadyVoted = true
             this.callSnackBar('success', 'Votre vote à bien été pris en compte.')
           }).catch((err) => {
             console.log(err)
@@ -62,66 +63,13 @@
         }
       },
 
-      addCounterInPropositionByPropositionId: function (propositionId) {
-        this.propositions.forEach(proposition => {
-          if (proposition[2] === propositionId) {
-            proposition[1]++
-          }
-        })
-      },
-
       callSnackBar (color, text) {
         this.showSnackBar = true
         this.colorSnackBar = color
         this.textSnackBar = text
-      },
-
-      callGetPropositionsIdBySrcutinId () {
-        if (this.scrutinId !== undefined) {
-          EsensVote.getPropositionsIdByScrutinId(this.scrutinId).then((ids) => {
-            this.callGetPropositionByScrutinIdAndPropositionId(ids)
-          })
-        }
-      },
-
-      callGetPropositionByScrutinIdAndPropositionId (ids) {
-        ids.forEach(idBigNumber => {
-          let id = idBigNumber.c[0]
-          EsensVote.getPropositionByScrutinIdAndPropositionId(this.scrutinId, id).then(proposition => {
-            this.propositions.push(this.getFormatProposition(proposition, id))
-          })
-        })
-      },
-
-      getFormatProposition (proposition, id) {
-        let formatProposition = []
-        formatProposition.push(window.web3.utils.toAscii(proposition[0]))
-        formatProposition.push(proposition[1].c[0])
-        formatProposition.push(id)
-        return formatProposition
-      },
-
-      getPropositionIdIfUserHasAlreadyVotedOnScrutinId () {
-        if (this.scrutinId !== undefined) {
-          EsensVote.getPropositionIdIfUserHasAlreadyVotedOnScrutinId(this.scrutinId).then(propositionId => {
-            this.setAlreadyVoteAndPropositionAlreadyVote(propositionId)
-          })
-        }
-      },
-
-      setAlreadyVoteAndPropositionAlreadyVote (propositionId) {
-        if (propositionId !== -1) {
-          this.isAlreadyVote = true
-          this.propositionIdAlreadyVote = propositionId
-        }
       }
     },
-    mounted: function () {
-      EsensVote.init().then(() => {
-        this.callGetPropositionsIdBySrcutinId()
-        this.getPropositionIdIfUserHasAlreadyVotedOnScrutinId()
-      })
-    }
+    mounted: function () {}
   }
 </script>
 

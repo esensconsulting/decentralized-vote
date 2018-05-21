@@ -7,7 +7,6 @@ import router from './router'
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
 import store from './store'
-import Users from '@/js/users'
 
 Vue.use(Vuetify, {
   theme: {
@@ -28,16 +27,6 @@ window.addEventListener('load', function () {
     store.commit('setLoading', true)
     window.web3.eth.getAccounts().then(accounts => {
       Vue.prototype.$account = accounts[0]
-      Users.init().then(() => {
-        Users.exists(Vue.prototype.$account).then(exist => {
-          if (exist) {
-            Users.authenticate().then(pseudo => {
-              store.commit('setConnectedUserLogin', pseudo)
-            })
-          }
-          store.commit('setLoading', false)
-        })
-      })
     })
     // })
   } else {
