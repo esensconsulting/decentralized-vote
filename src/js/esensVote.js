@@ -49,6 +49,20 @@ const EsensVote = {
         reject(err)
       })
     })
+  },
+
+  getPropositionIdIfUserHasAlreadyVotedOnScrutinId: function (scrutinId) {
+    let self = this
+
+    return new Promise((resolve, reject) => {
+      self.instance.getPropositionIdIfUserHasAlreadyVotedOnScrutinId.call(scrutinId,
+        {from: Vue.prototype.$account}
+      ).then((propositionId) => {
+        resolve(propositionId.c[0] * propositionId.s)
+      }).catch(err => {
+        reject(err)
+      })
+    })
   }
 }
 

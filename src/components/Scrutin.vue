@@ -23,7 +23,7 @@
           </v-card-title>
           <v-slide-y-transition>
             <v-card-text v-if="showProposition">
-              <Propositions :scrutin="scrutin"></Propositions>
+              <Propositions :scrutin="scrutin"/>
             </v-card-text>
           </v-slide-y-transition>
         </v-card>
@@ -54,6 +54,14 @@
         EsensVote.isAdmin(this.scrutin.scrutinId).then((isAdmin) => {
           self.isAdmin = isAdmin
         })
+        EsensVote.getPropositionIdIfUserHasAlreadyVotedOnScrutinId(self.scrutin.scrutinId).then(propositionId => {
+          if (propositionId !== -1) {
+            self.$store.commit('logCurrentUserVote', {
+              scrutinId: self.scrutin.scrutinId,
+              propositionId: propositionId
+            })
+          }
+        })
       })
     }
   }
@@ -80,7 +88,7 @@
     color: #42b983;
   }
 
-  .is-already-vote-layout{
+  .is-already-vote-layout {
     background-color: #90CAF9;
   }
 </style>

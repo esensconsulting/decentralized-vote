@@ -2,8 +2,7 @@
   <v-container fluid>
     <v-layout>
       <v-flex md12>
-        <scrutin v-for="scrutin in this.$store.state.scrutins" :key="scrutin.scrutinId" v-bind:data="scrutin.scrutinId"
-                 :scrutin="scrutin"></scrutin>
+        <scrutin v-for="scrutin in this.$store.state.scrutins" :key="scrutin.scrutinId" :scrutin="scrutin"/>
       </v-flex>
     </v-layout>
   </v-container>
@@ -12,7 +11,6 @@
 <script>
   import EsensVote from '@/js/esensVote'
   import Scrutin from './Scrutin.vue'
-  import Vue from 'vue'
 
   export default {
     name: 'dashboard',
@@ -66,24 +64,9 @@
               scrutinId: vote._scrutinId.c[0],
               counter: vote._counter.c[0]
             })
-            self.watchCurrentUserVoteSubmited()
-          }
-        })
-      },
-
-      watchCurrentUserVoteSubmited () {
-        let self = this
-        EsensVote.instance.CurrentUserVoteSubmited({_user: Vue.prototype.$account}, {fromBlock: 0, toBlock: 'latest'}).watch(function (error, result) {
-          if (!error) {
-            let currentUserVote = result.args
-            self.$store.commit('logCurrentUserVote', {
-              scrutinId: currentUserVote._scrutinId.c[0],
-              propositionId: currentUserVote._propositionId.c[0]
-            })
           }
         })
       }
-
     },
     mounted: function () {
       let self = this

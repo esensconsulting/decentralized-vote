@@ -1,4 +1,4 @@
-pragma solidity ^0.4.15;
+pragma solidity ^0.4.23;
 
 contract EsensVote {
   struct Scrutin {
@@ -24,8 +24,10 @@ contract EsensVote {
   Proposition[] propositions;
   Vote[] private votes;
 
+  mapping(address => mapping(uint => uint)) private propositionIdVotedForScrutinId;
+  mapping(address => mapping(uint => bool)) private isScrutinVoted;
+
   event VoteSubmitted(uint _scrutinId, uint _propositionId, uint _counter);
-  event CurrentUserVoteSubmited(address indexed _user, uint _scrutinId, uint _propositionId);
   event ScrutinCreated(uint _scrutinId, bytes32 _name, address _scrutinOwner, bool _isVisibleResult, bool _isOpenToProposal);
   event PropositionCreated(uint _propositionId, uint _scrutinId, bytes32 _description);
 
@@ -41,7 +43,7 @@ contract EsensVote {
     emit ScrutinCreated(_scrutinId, _name, msg.sender, _isVisibleResult, _isOpenToProposal);
   }
 
-  function isAdmin(uint _scrutinId) public returns (bool) {
+  function isAdmin(uint _scrutinId) public view returns (bool) {
     return scrutins[_scrutinId].scrutinOwner == msg.sender;
   }
 
@@ -60,53 +62,18 @@ contract EsensVote {
 
   function submitVote(uint _propositionId) public {
     Proposition storage proposition = propositions[_propositionId];
-    require(getPropositionIdIfUserHasAlreadyVotedOnScrutinId(proposition.scrutinId) == - 1);
+    require(isScrutinVoted[msg.sender][proposition.scrutinId] == false);
     proposition.counter++;
     votes.push(Vote(msg.sender, proposition.scrutinId, _propositionId));
+    isScrutinVoted[msg.sender][proposition.scrutinId] = true;
+    propositionIdVotedForScrutinId[msg.sender][proposition.scrutinId] = _propositionId;
     emit VoteSubmitted(proposition.scrutinId, _propositionId, proposition.counter);
-    emit CurrentUserVoteSubmited(msg.sender, proposition.scrutinId, _propositionId);
   }
 
   function getPropositionIdIfUserHasAlreadyVotedOnScrutinId(uint _scrutinId) public view returns (int) {
-    for (uint i = 0; i < votes.length; i++) {
-      if (votes[i].scrutinId == _scrutinId && votes[i].voter == msg.sender) {
-        return int(votes[i].propositionId);
-      }
+    if(isScrutinVoted[msg.sender][_scrutinId] != false) {
+        return int(propositionIdVotedForScrutinId[msg.sender][_scrutinId]);
     }
     return - 1;
   }
-
-  function getVoteCountByScrutinId(uint _scrutinId) public view returns (uint) {
-    uint counter = 0;
-    for (uint i = 0; i < votes.length; i++) {
-      if (votes[i].scrutinId == _scrutinId) {
-        counter++;
-      }
-    }
-    return counter;
-  }
-
-  function getPropositionsIdByScrutinId(uint _scrutinId) public view returns (uint[]) {
-    uint[] memory result = new uint[](propositions.length);
-    uint counter = 0;
-    for (uint i = 0; i < propositions.length; i++) {
-      if (propositions[i].scrutinId == _scrutinId) {
-        result[counter] = i;
-        counter++;
-      }
-    }
-    return result;
-  }
-
-  function getPropositionByScrutinIdAndPropositionId(uint _scrutinId, uint _propositionId) public view returns (bytes32, uint) {
-    Proposition storage proposition = propositions[_propositionId];
-    require(proposition.scrutinId == _scrutinId);
-    bytes32 description = proposition.description;
-    uint counter = 0;
-    if (scrutins[_scrutinId].isVisibleResult == true) {
-      counter = proposition.counter;
-    }
-    return (description, counter);
-  }
-
 }
