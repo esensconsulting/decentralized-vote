@@ -7,13 +7,19 @@
             <div class="headline">
               {{name}}
             </div>
-            <v-btn icon @click.native="showProposition = !showProposition" align-end>
-              <v-icon>{{ !showProposition ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</v-icon>
-            </v-btn>
+            <div align-end>
+              <v-btn icon v-if="isAdmin">
+                <v-icon>edit</v-icon>
+              </v-btn>
+              <v-btn icon @click.native="showProposition = !showProposition">
+                <v-icon>{{ !showProposition ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</v-icon>
+              </v-btn>
+            </div>
           </v-card-title>
           <v-slide-y-transition>
             <v-card-text v-if="showProposition">
               <Propositions :scrutinId="scrutinId"></Propositions>
+              <Propositions :isVisibleResult="isVisibleResult"></Propositions>
             </v-card-text>
           </v-slide-y-transition>
         </v-card>
@@ -33,6 +39,8 @@
     data () {
       return {
         name: '',
+        isVisibleResult: false,
+        isAdmin: false,
         showProposition: false
       }
     },
@@ -41,8 +49,12 @@
     mounted: function () {
       let self = this
       EsensVote.init().then(() => {
-        EsensVote.getScrutinNameById(self.scrutinId).then((name) => {
-          self.name = name
+        EsensVote.getScrutinId(self.scrutinId).then((scrutin) => {
+          self.name = window.web3.utils.toAscii(scrutin[0])
+          self.isVisibleResult = scrutin[2]
+        })
+        EsensVote.isAdmin(self.scrutinId).then((isAdmin) => {
+          self.isAdmin = isAdmin
         })
       })
     }

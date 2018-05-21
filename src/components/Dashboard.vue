@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-layout>
       <v-flex md12>
-        <scrutin v-for="index in scrutinLength" :scrutinId="index-1"></scrutin>
+        <scrutin v-for="index in scrutinLength" :key="index" v-bind:data="index" :scrutinId="index-1"></scrutin>
       </v-flex>
     </v-layout>
   </v-container>

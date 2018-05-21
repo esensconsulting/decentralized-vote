@@ -38,14 +38,28 @@ const EsensVote = {
     })
   },
 
-  getScrutinNameById: function (id) {
+  getScrutinId: function (id) {
     let self = this
 
     return new Promise((resolve, reject) => {
       self.instance.scrutins.call(id,
         {from: Vue.prototype.$account}
-      ).then(name => {
-        resolve(window.web3.utils.toAscii(name[0]))
+      ).then(scrutin => {
+        resolve(scrutin)
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+
+  isAdmin: function (id) {
+    let self = this
+
+    return new Promise((resolve, reject) => {
+      self.instance.isAdmin.call(id,
+        {from: Vue.prototype.$account}
+      ).then(isAdmin => {
+        resolve(isAdmin)
       }).catch(err => {
         reject(err)
       })
@@ -102,7 +116,7 @@ const EsensVote = {
       self.instance.getVoteCountByScrutinId.call(scrutinId,
         {from: Vue.prototype.$account}
       ).then((countVoteScrutin) => {
-        resolve(countVoteScrutin)
+        resolve(countVoteScrutin.c[0])
       }).catch(err => {
         reject(err)
       })
