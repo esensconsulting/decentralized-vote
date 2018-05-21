@@ -24,20 +24,21 @@ contract EsensVote {
   Proposition[] propositions;
   Vote[] private votes;
 
-  event VoteSubmitted(uint _scrutinId, uint _propositionId);
+  event VoteSubmitted(uint _scrutinId, uint _propositionId, uint _counter);
+  event CurrentUserVoteSubmited(address indexed _user, uint _scrutinId, uint _propositionId);
+  event ScrutinCreated(uint _scrutinId, bytes32 _name, address _scrutinOwner, bool _isVisibleResult, bool _isOpenToProposal);
+  event PropositionCreated(uint _propositionId, uint _scrutinId, bytes32 _description);
 
   function EsensVote() public {
-    scrutins.push(Scrutin('Presidentielle', msg.sender, true, false));
-    propositions.push(Proposition(0, 'Macron', 0));
-    propositions.push(Proposition(0, 'Le Pen', 0));
-  }
-
-  function getScrutinLength() public view returns (uint){
-    return scrutins.length;
+    createScrutin('Presidentielle', true, false);
+    createProposal(0, 'Macron');
+    createProposal(0, 'Le Pen');
+    createProposal(0, 'Esens');
   }
 
   function createScrutin(bytes32 _name, bool _isVisibleResult, bool _isOpenToProposal) public returns (uint) {
-    return scrutins.push(Scrutin(_name, msg.sender, _isVisibleResult, _isOpenToProposal)) - 1;
+    uint _scrutinId = scrutins.push(Scrutin(_name, msg.sender, _isVisibleResult, _isOpenToProposal)) - 1;
+    emit ScrutinCreated(_scrutinId, _name, msg.sender, _isVisibleResult, _isOpenToProposal);
   }
 
   function isAdmin(uint _scrutinId) public returns (bool) {
@@ -52,7 +53,8 @@ contract EsensVote {
   function createProposal(uint _scrutinId, bytes32 _description) public {
     Scrutin storage scrutin = scrutins[_scrutinId];
     if (scrutin.isOpenToProposal || scrutin.scrutinOwner == msg.sender) {
-      propositions.push(Proposition(_scrutinId, _description, 0));
+      uint _propositionId = propositions.push(Proposition(_scrutinId, _description, 0)) - 1;
+      emit PropositionCreated(_propositionId, _scrutinId, _description);
     }
   }
 
@@ -61,7 +63,8 @@ contract EsensVote {
     require(getPropositionIdIfUserHasAlreadyVotedOnScrutinId(proposition.scrutinId) == - 1);
     proposition.counter++;
     votes.push(Vote(msg.sender, proposition.scrutinId, _propositionId));
-    VoteSubmitted(proposition.scrutinId, _propositionId);
+    emit VoteSubmitted(proposition.scrutinId, _propositionId, proposition.counter);
+    emit CurrentUserVoteSubmited(msg.sender, proposition.scrutinId, _propositionId);
   }
 
   function getPropositionIdIfUserHasAlreadyVotedOnScrutinId(uint _scrutinId) public view returns (int) {

@@ -2,10 +2,15 @@
   <v-container>
     <v-layout row wrap>
       <v-flex xs12 lg6 mb-3>
-        <v-card>
+        <v-card v-bind:class="{'is-already-vote-layout': scrutin.isAlreadyVoted  }">
           <v-card-title primary-title class="justify-space-between">
-            <div class="headline">
-              {{name}}
+            <div>
+              <span class="headline">
+                {{scrutin.name}}
+              </span>
+              <span v-if="scrutin.isAlreadyVoted ">
+                  (Déja voté)
+              </span>
             </div>
             <div align-end>
               <v-btn icon v-if="isAdmin">
@@ -18,8 +23,7 @@
           </v-card-title>
           <v-slide-y-transition>
             <v-card-text v-if="showProposition">
-              <Propositions :scrutinId="scrutinId"></Propositions>
-              <Propositions :isVisibleResult="isVisibleResult"></Propositions>
+              <Propositions :scrutin="scrutin"></Propositions>
             </v-card-text>
           </v-slide-y-transition>
         </v-card>
@@ -34,12 +38,10 @@
 
   export default {
     name: 'scrutin',
-    props: ['scrutinId'],
+    props: ['scrutin'],
     components: {Propositions},
     data () {
       return {
-        name: '',
-        isVisibleResult: false,
         isAdmin: false,
         showProposition: false
       }
@@ -49,11 +51,7 @@
     mounted: function () {
       let self = this
       EsensVote.init().then(() => {
-        EsensVote.getScrutinId(self.scrutinId).then((scrutin) => {
-          self.name = window.web3.utils.toAscii(scrutin[0])
-          self.isVisibleResult = scrutin[2]
-        })
-        EsensVote.isAdmin(self.scrutinId).then((isAdmin) => {
+        EsensVote.isAdmin(this.scrutin.scrutinId).then((isAdmin) => {
           self.isAdmin = isAdmin
         })
       })
@@ -80,5 +78,9 @@
 
   a {
     color: #42b983;
+  }
+
+  .is-already-vote-layout{
+    background-color: #90CAF9;
   }
 </style>

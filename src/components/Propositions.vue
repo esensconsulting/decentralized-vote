@@ -1,10 +1,17 @@
 <template>
   <div>
-    <v-list>
-      <v-list-tile href='javascript:;' v-on:click='submitVote(proposition[2])' v-for='proposition in propositions' :key="proposition[3]" v-bind:data="proposition">
+    <v-list v-bind:class="{'is-already-vote-layout': scrutin.isAlreadyVoted }">
+      <v-list-tile href='javascript:;'
+                   v-on:click='submitVote(proposition.propositionId)'
+                   v-for='proposition in getPropositions'
+                   :key="proposition.propositionId"
+                   v-bind:data="proposition">
         <v-list-tile-content>
-          <v-list-tile-title>{{proposition[0]}}</v-list-tile-title>
-          <v-list-tile-sub-title v-if='isVisibleResult'>Résultat : {{proposition[1]}}</v-list-tile-sub-title>
+          <v-list-tile-title>
+            <v-icon v-if="proposition.isAlreadyVoted">done</v-icon>
+            {{proposition.description}}
+          </v-list-tile-title>
+          <v-list-tile-sub-title v-if='scrutin.isVisibleResult'>Résultat : {{proposition.vote}}</v-list-tile-sub-title>
         </v-list-tile-content>
       </v-list-tile>
     </v-list>
@@ -28,63 +35,41 @@
   export default {
     components: {},
     name: 'propositions',
-    props: ['scrutinId', 'isVisibleResult'],
+    props: ['scrutin'],
     data () {
       return {
         name: '',
-        propositions: [],
         showSnackBar: false,
         colorSnackBar: '',
         textSnackBar: ''
       }
     },
-    computed: {},
+    computed: {
+      getPropositions () {
+        return this.scrutin.propositions
+      }
+    },
     methods: {
       submitVote (propositionId) {
-        EsensVote.submitVote(propositionId).then(() => {
-          this.callSnackBar('success', 'Votre vote à bien été pris en compte.')
-        }).catch((err) => {
-          console.log(err)
-          this.callSnackBar('error', 'Vous avez deja voté pour ce scrutin.')
-        })
-      },
-
-      callSnackBar: function (color, text) {
-        this.showSnackBar = true
-        this.colorSnackBar = color
-        this.textSnackBar = text
-      },
-
-      callGetPropositionsIdBySrcutinId () {
-        if (this.scrutinId !== undefined) {
-          EsensVote.getPropositionsIdByScrutinId(this.scrutinId).then((ids) => {
-            this.callGetPropositionByScrutinIdAndPropositionId(ids)
+        if (!this.scrutin.isAlreadyVoted) {
+          EsensVote.submitVote(propositionId).then(() => {
+            this.scrutin.isAlreadyVoted = true
+            this.getPropositions[propositionId].isAlreadyVoted = true
+            this.callSnackBar('success', 'Votre vote à bien été pris en compte.')
+          }).catch((err) => {
+            console.log(err)
+            this.callSnackBar('error', 'Vous avez certainement déja voté pour ce scrutin.')
           })
         }
       },
 
-      callGetPropositionByScrutinIdAndPropositionId (ids) {
-        ids.forEach(idBigNumber => {
-          let id = idBigNumber.c[0]
-          EsensVote.getPropositionByScrutinIdAndPropositionId(this.scrutinId, id).then(proposition => {
-            this.propositions.push(this.getFormatProposition(proposition, id))
-          })
-        })
-      },
-
-      getFormatProposition (proposition, id) {
-        let formatProposition = []
-        formatProposition.push(window.web3.utils.toAscii(proposition[0]))
-        formatProposition.push(proposition[1].c[0])
-        formatProposition.push(id)
-        return formatProposition
+      callSnackBar (color, text) {
+        this.showSnackBar = true
+        this.colorSnackBar = color
+        this.textSnackBar = text
       }
     },
-    mounted: function () {
-      EsensVote.init().then(() => {
-        this.callGetPropositionsIdBySrcutinId()
-      })
-    }
+    mounted: function () {}
   }
 </script>
 
@@ -107,5 +92,9 @@
 
   a {
     color: #42b983;
+  }
+
+  .is-already-vote-layout{
+    background-color: #90CAF9;
   }
 </style>

@@ -5,6 +5,7 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state: {
+    scrutins: {},
     connectedUser: {
       isLogged: false,
       login: null
@@ -18,6 +19,19 @@ const store = new Vuex.Store({
     },
     setLoading (state, status) {
       state.isLoading = status
+    },
+    addScrutin (state, scrutin) {
+      Vue.set(state.scrutins, scrutin.scrutinId, scrutin)
+    },
+    addProposition (state, proposition) {
+      Vue.set(state.scrutins[proposition.scrutinId].propositions, proposition.propositionId, proposition)
+    },
+    addVote (state, vote) {
+      state.scrutins[vote.scrutinId].propositions[vote.propositionId].vote = vote.counter
+    },
+    logCurrentUserVote (state, currentUserVote) {
+      state.scrutins[currentUserVote.scrutinId].isAlreadyVoted = true
+      state.scrutins[currentUserVote.scrutinId].propositions[currentUserVote.propositionId].isAlreadyVoted = true
     }
   }
 })
