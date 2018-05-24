@@ -44,6 +44,22 @@
               isAlreadyVoted: false
             })
             self.watchPropositionCreated()
+            self.watchScrutinUpdated()
+          }
+        })
+      },
+
+      watchScrutinUpdated () {
+        let self = this
+        EsensVote.instance.ScrutinUpdated({}, {fromBlock: 0, toBlock: 'latest'}).watch(function (error, result) {
+          if (!error) {
+            let scrutin = result.args
+            self.$store.commit('updateScrutin', {
+              scrutinId: scrutin._scrutinId.c[0],
+              name: window.web3.utils.toAscii(scrutin._name),
+              isVisibleResult: scrutin._isVisibleResult,
+              isOpenToProposal: scrutin._isOpenToProposal
+            })
           }
         })
       },

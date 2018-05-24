@@ -18,6 +18,7 @@ contract EsensVote {
     uint scrutinId;
     bytes32 description;
     uint counter;
+    address scrutinOwner;
   }
 
   Scrutin[] public scrutins;
@@ -29,6 +30,7 @@ contract EsensVote {
 
   event VoteSubmitted(uint _scrutinId, uint _propositionId, uint _counter);
   event ScrutinCreated(uint _scrutinId, bytes32 _name, address _scrutinOwner, bool _isVisibleResult, bool _isOpenToProposal);
+  event ScrutinUpdated(uint _scrutinId, bytes32 _name, address _scrutinOwner, bool _isVisibleResult, bool _isOpenToProposal);
   event PropositionCreated(uint _propositionId, uint _scrutinId, bytes32 _description);
 
   function EsensVote() public {
@@ -47,15 +49,18 @@ contract EsensVote {
     return scrutins[_scrutinId].scrutinOwner == msg.sender;
   }
 
-  function updateScrutinVisible(uint _scrutinId, bool _isVisibleResult) public {
+  function updateScrutin(uint _scrutinId, bytes32 _name, bool _isVisibleResult, bool _isOpenToProposal) public {
     require(scrutins[_scrutinId].scrutinOwner == msg.sender);
+    scrutins[_scrutinId].name = _name;
     scrutins[_scrutinId].isVisibleResult = _isVisibleResult;
+    scrutins[_scrutinId].isOpenToProposal = _isOpenToProposal;
+    emit ScrutinUpdated(_scrutinId, _name, msg.sender, _isVisibleResult, _isOpenToProposal);
   }
 
   function createProposal(uint _scrutinId, bytes32 _description) public {
     Scrutin storage scrutin = scrutins[_scrutinId];
     if (scrutin.isOpenToProposal || scrutin.scrutinOwner == msg.sender) {
-      uint _propositionId = propositions.push(Proposition(_scrutinId, _description, 0)) - 1;
+      uint _propositionId = propositions.push(Proposition(_scrutinId, _description, 0, msg.sender)) - 1;
       emit PropositionCreated(_propositionId, _scrutinId, _description);
     }
   }

@@ -68,6 +68,24 @@ const EsensVote = {
     })
   },
 
+  updateScrutin: function (scrutinId, name, isVisibleResult, isOpenToProposal) {
+    let self = this
+
+    return new Promise((resolve, reject) => {
+      self.instance.updateScrutin(
+        scrutinId,
+        name,
+        isVisibleResult,
+        isOpenToProposal,
+        {from: Vue.prototype.$account}
+      ).then(() => {
+        resolve()
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+
   createProposal: function (scrutinId, name) {
     let self = this
 

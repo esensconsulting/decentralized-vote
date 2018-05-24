@@ -23,6 +23,14 @@ const store = new Vuex.Store({
     addScrutin (state, scrutin) {
       Vue.set(state.scrutins, scrutin.scrutinId, scrutin)
     },
+    updateScrutin (state, scrutin) {
+      Object.keys(state.scrutins[scrutin.scrutinId]).forEach(key => {
+        if (scrutin[key] !== undefined) {
+          state.scrutins[scrutin.scrutinId][key] = scrutin[key]
+        }
+      }
+    )
+    },
     addProposition (state, proposition) {
       Vue.set(state.scrutins[proposition.scrutinId].propositions, proposition.propositionId, proposition)
     },

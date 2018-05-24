@@ -16,7 +16,7 @@
         </v-card-title>
         <v-slide-y-transition>
           <v-card-text>
-            <form-add-scrutin @changeIsCreatedScrutin="changeIsCreatedScrutin"></form-add-scrutin>
+            <form-scrutin @isEndFormScrutin="isEndFormScrutin"></form-scrutin>
           </v-card-text>
         </v-slide-y-transition>
       </div>
@@ -42,12 +42,12 @@
 </template>
 
 <script>
-  import FormAddScrutin from './FormAddScrutin'
+  import FormScrutin from './FormScrutin'
 
   export default {
     name: 'add-scrutin',
     props: [],
-    components: {FormAddScrutin},
+    components: {FormScrutin},
     data () {
       return {
         isCreatedScrutin: false,
@@ -58,7 +58,7 @@
     },
     computed: {},
     methods: {
-      changeIsCreatedScrutin () {
+      isEndFormScrutin () {
         this.isCreatedScrutin = false
         this.callSnackBar('success', 'Votre scrutin à bien été créé, il va apparaitre d\'ici quelques secondes.')
       },
