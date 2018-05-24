@@ -11,7 +11,7 @@
               </span>
             </div>
             <div align-end>
-              <v-btn icon v-if="isAdmin">
+              <v-btn icon v-if="scrutin.isAdmin">
                 <v-icon>edit</v-icon>
               </v-btn>
               <v-btn icon @click.native="showProposition = !showProposition">
@@ -48,7 +48,7 @@
       let self = this
       EsensVote.init().then(() => {
         EsensVote.isAdmin(this.scrutin.scrutinId).then((isAdmin) => {
-          self.isAdmin = isAdmin
+          this.scrutin.isAdmin = isAdmin
         })
         EsensVote.getPropositionIdIfUserHasAlreadyVotedOnScrutinId(self.scrutin.scrutinId).then(propositionId => {
           if (propositionId !== -1) {

@@ -38,7 +38,9 @@
               scrutinId: scrutin._scrutinId.c[0],
               name: window.web3.utils.toAscii(scrutin._name),
               isVisibleResult: scrutin._isVisibleResult,
+              isOpenToProposal: scrutin._isOpenToProposal,
               propositions: {},
+              isAdmin: false,
               isAlreadyVoted: false
             })
             self.watchPropositionCreated()

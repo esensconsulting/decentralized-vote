@@ -14,6 +14,7 @@
           <v-list-tile-sub-title v-if='scrutin.isVisibleResult'>Résultat : {{proposition.vote}}</v-list-tile-sub-title>
         </v-list-tile-content>
       </v-list-tile>
+      <add-proposition v-if="scrutin.isOpenToProposal || scrutin.isAdmin" :scrutinId="scrutin.scrutinId"></add-proposition>
     </v-list>
 
     <v-snackbar
@@ -31,9 +32,10 @@
 
 <script>
   import EsensVote from '@/js/esensVote'
+  import AddProposition from './AddProposition'
 
   export default {
-    components: {},
+    components: {AddProposition},
     name: 'propositions',
     props: ['scrutin'],
     data () {

@@ -1,7 +1,7 @@
 <template>
   <div>
     <template>
-      <v-form ref="form" v-model="valid" lazy-validation>
+      <v-form v-on:submit.prevent="submit" ref="form" v-model="valid" lazy-validation>
         <v-text-field
           v-model="name"
           :rules="nameRules"
@@ -53,10 +53,6 @@
 
       clear () {
         this.$refs.form.reset()
-      },
-
-      changeIsCreatedScrutin () {
-        this.$emit('changeIsCreatedScrutin', false)
       }
     },
     mounted: function () {}
