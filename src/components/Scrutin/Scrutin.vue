@@ -1,7 +1,5 @@
 <template>
-  <v-container>
-    <v-layout row wrap>
-      <v-flex xs12 lg6 mb-3>
+      <v-flex xs12 lg6 mb3>
         <v-card v-bind:class="{'is-already-vote-layout': scrutin.isAlreadyVoted  }">
           <v-card-title primary-title class="justify-space-between">
             <div>
@@ -28,13 +26,11 @@
           </v-slide-y-transition>
         </v-card>
       </v-flex>
-    </v-layout>
-  </v-container>
 </template>
 
 <script>
   import EsensVote from '@/js/esensVote'
-  import Propositions from './Propositions.vue'
+  import Propositions from '../Proposition/Propositions.vue'
 
   export default {
     name: 'scrutin',
