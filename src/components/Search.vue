@@ -3,7 +3,7 @@
     <v-text-field
       v-model="searchWord"
       append-icon="search"
-      label="Recherche (Scrutins, propositions)"
+      label="Recherche (Scrutins, Propositions)"
       v-on:keyup="changeSearch()"
       single-line
       hide-details
@@ -23,11 +23,9 @@
     methods: {
       changeSearch () {
         this.$store.state.storeSearch.searchWord = this.searchWord
-        if (this.searchWord !== '') {
-          this.$store.dispatch('initSearchResult')
-          return
-        }
-        this.$store.state.storeSearch.searchScrutins = this.$store.state.scrutins
+        this.searchWord !== ''
+          ? this.$store.dispatch('initSearchResult')
+          : this.$store.state.storeSearch.searchScrutins = this.$store.state.scrutins
       }
     },
     mounted: function () {

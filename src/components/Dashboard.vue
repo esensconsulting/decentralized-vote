@@ -2,9 +2,9 @@
   <v-container grid-list-xl>
     <search></search>
     <v-layout row wrap>
-          <add-scrutin></add-scrutin>
-          <scrutin v-for="scrutin in reverseScrutins" :key="scrutin.scrutinId" :scrutin="scrutin"/>
-        </v-layout>
+      <add-scrutin></add-scrutin>
+      <scrutin v-for="scrutin in reverseScrutins" :key="scrutin.scrutinId" :scrutin="scrutin"/>
+    </v-layout>
   </v-container>
 </template>
 
@@ -36,17 +36,16 @@
         let self = this
         EsensVote.instance.ScrutinCreated({}, {fromBlock: 0, toBlock: 'latest'}).watch(function (error, result) {
           if (!error) {
-            let scrutinResult = result.args
-            let scrutin = {
-              scrutinId: scrutinResult._scrutinId.c[0],
-              name: window.web3.utils.toAscii(scrutinResult._name),
-              isVisibleResult: scrutinResult._isVisibleResult,
-              isOpenToProposal: scrutinResult._isOpenToProposal,
+            let scrutin = result.args
+            self.$store.commit('addScrutin', {
+              scrutinId: scrutin._scrutinId.c[0],
+              name: window.web3.utils.toAscii(scrutin._name),
+              isVisibleResult: scrutin._isVisibleResult,
+              isOpenToProposal: scrutin._isOpenToProposal,
               propositions: {},
               isAdmin: false,
               isAlreadyVoted: false
-            }
-            self.$store.commit('addScrutin', scrutin)
+            })
             self.$store.dispatch('initSearchResult')
             self.watchPropositionCreated()
             self.watchScrutinUpdated()
@@ -65,6 +64,7 @@
               isVisibleResult: scrutin._isVisibleResult,
               isOpenToProposal: scrutin._isOpenToProposal
             })
+            self.$store.dispatch('initSearchResult')
           }
         })
       },
@@ -74,10 +74,9 @@
         EsensVote.instance.PropositionCreated({}, {fromBlock: 0, toBlock: 'latest'}).watch(function (error, result) {
           if (!error) {
             let proposition = result.args
-            let scrutinId = proposition._scrutinId.c[0]
             self.$store.commit('addProposition', {
               propositionId: proposition._propositionId.c[0],
-              scrutinId: scrutinId,
+              scrutinId: proposition._scrutinId.c[0],
               description: window.web3.utils.toAscii(proposition._description),
               vote: 0,
               isAlreadyVoted: false

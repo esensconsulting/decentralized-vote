@@ -5,7 +5,6 @@ export default {
     searchScrutins: {},
     searchWord: ''
   },
-  mutations: {},
   actions: {
     initSearchResult (state) {
       state.state.searchScrutins = {}
@@ -40,6 +39,5 @@ export default {
         return fuzzysearch(state.state.searchWord.toLowerCase(), word.toLowerCase())
       }
     }
-  },
-  getters: {}
+  }
 }
