@@ -1,9 +1,13 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import storeSearch from './modules/storeSearch'
 
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
+  modules: {
+    storeSearch
+  },
   state: {
     scrutins: {},
     connectedUser: {

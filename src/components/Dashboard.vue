@@ -1,6 +1,7 @@
 <template>
   <v-container grid-list-xl>
-        <v-layout row wrap>
+    <search></search>
+    <v-layout row wrap>
           <add-scrutin></add-scrutin>
           <scrutin v-for="scrutin in reverseScrutins" :key="scrutin.scrutinId" :scrutin="scrutin"/>
         </v-layout>
@@ -11,17 +12,19 @@
   import EsensVote from '@/js/esensVote'
   import Scrutin from './Scrutin/Scrutin.vue'
   import AddScrutin from './Scrutin/AddScrutin.vue'
+  import Search from './Search.vue'
 
   export default {
     name: 'dashboard',
-    components: {Scrutin, AddScrutin},
-    data () {
-      return {}
+    components: {
+      Search,
+      Scrutin,
+      AddScrutin
     },
     computed: {
       reverseScrutins () {
         let resultScrutins = []
-        let scrutins = this.$store.state.scrutins
+        let scrutins = this.$store.state.storeSearch.searchScrutins
         Object.keys(scrutins).sort().reverse().forEach((key) => {
           resultScrutins.push(scrutins[key])
         })
@@ -33,16 +36,18 @@
         let self = this
         EsensVote.instance.ScrutinCreated({}, {fromBlock: 0, toBlock: 'latest'}).watch(function (error, result) {
           if (!error) {
-            let scrutin = result.args
-            self.$store.commit('addScrutin', {
-              scrutinId: scrutin._scrutinId.c[0],
-              name: window.web3.utils.toAscii(scrutin._name),
-              isVisibleResult: scrutin._isVisibleResult,
-              isOpenToProposal: scrutin._isOpenToProposal,
+            let scrutinResult = result.args
+            let scrutin = {
+              scrutinId: scrutinResult._scrutinId.c[0],
+              name: window.web3.utils.toAscii(scrutinResult._name),
+              isVisibleResult: scrutinResult._isVisibleResult,
+              isOpenToProposal: scrutinResult._isOpenToProposal,
               propositions: {},
               isAdmin: false,
               isAlreadyVoted: false
-            })
+            }
+            self.$store.commit('addScrutin', scrutin)
+            self.$store.dispatch('initSearchResult')
             self.watchPropositionCreated()
             self.watchScrutinUpdated()
           }
@@ -69,14 +74,16 @@
         EsensVote.instance.PropositionCreated({}, {fromBlock: 0, toBlock: 'latest'}).watch(function (error, result) {
           if (!error) {
             let proposition = result.args
+            let scrutinId = proposition._scrutinId.c[0]
             self.$store.commit('addProposition', {
               propositionId: proposition._propositionId.c[0],
-              scrutinId: proposition._scrutinId.c[0],
+              scrutinId: scrutinId,
               description: window.web3.utils.toAscii(proposition._description),
               vote: 0,
               isAlreadyVoted: false
             })
             self.watchVoteSubmitted()
+            self.$store.dispatch('initSearchResult')
           }
         })
       },
