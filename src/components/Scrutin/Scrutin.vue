@@ -54,7 +54,8 @@
     props: ['scrutin'],
     components: {
       FormScrutin,
-      Propositions},
+      Propositions
+    },
     data () {
       return {
         isAdmin: false,

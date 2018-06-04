@@ -32,6 +32,7 @@ contract EsensVote {
   event ScrutinCreated(uint _scrutinId, bytes32 _name, address _scrutinOwner, bool _isVisibleResult, bool _isOpenToProposal);
   event ScrutinUpdated(uint _scrutinId, bytes32 _name, address _scrutinOwner, bool _isVisibleResult, bool _isOpenToProposal);
   event PropositionCreated(uint _propositionId, uint _scrutinId, bytes32 _description);
+  event PropositionUpdated(uint _propositionId, uint _scrutinId, bytes32 _description);
 
   function EsensVote() public {
     createScrutin('Presidentielle', true, false);
@@ -49,6 +50,10 @@ contract EsensVote {
     return scrutins[_scrutinId].scrutinOwner == msg.sender;
   }
 
+  function isAdminProposition(uint _propositionId) public view returns (bool) {
+    return propositions[_propositionId].scrutinOwner == msg.sender;
+  }
+
   function updateScrutin(uint _scrutinId, bytes32 _name, bool _isVisibleResult, bool _isOpenToProposal) public {
     require(scrutins[_scrutinId].scrutinOwner == msg.sender);
     scrutins[_scrutinId].name = _name;
@@ -63,6 +68,13 @@ contract EsensVote {
       uint _propositionId = propositions.push(Proposition(_scrutinId, _description, 0, msg.sender)) - 1;
       emit PropositionCreated(_propositionId, _scrutinId, _description);
     }
+  }
+
+  function updateProposition(uint _propositionId, bytes32 _description) public {
+    Proposition storage proposition = propositions[_propositionId];
+    require(proposition.scrutinOwner == msg.sender || scrutins[proposition.scrutinId].scrutinOwner == msg.sender);
+    proposition.description = _description;
+    emit PropositionUpdated(_propositionId, proposition.scrutinId, _description);
   }
 
   function submitVote(uint _propositionId) public {
