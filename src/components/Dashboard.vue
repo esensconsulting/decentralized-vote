@@ -1,9 +1,10 @@
 <template>
   <v-container grid-list-xl>
-        <v-layout row wrap>
-          <add-scrutin></add-scrutin>
-          <scrutin v-for="scrutin in reverseScrutins" :key="scrutin.scrutinId" :scrutin="scrutin"/>
-        </v-layout>
+    <search></search>
+    <v-layout row wrap>
+      <add-scrutin></add-scrutin>
+      <scrutin v-for="scrutin in reverseScrutins" :key="scrutin.scrutinId" :scrutin="scrutin"/>
+    </v-layout>
   </v-container>
 </template>
 
@@ -11,17 +12,19 @@
   import EsensVote from '@/js/esensVote'
   import Scrutin from './Scrutin/Scrutin.vue'
   import AddScrutin from './Scrutin/AddScrutin.vue'
+  import Search from './Search.vue'
 
   export default {
     name: 'dashboard',
-    components: {Scrutin, AddScrutin},
-    data () {
-      return {}
+    components: {
+      Search,
+      Scrutin,
+      AddScrutin
     },
     computed: {
       reverseScrutins () {
         let resultScrutins = []
-        let scrutins = this.$store.state.scrutins
+        let scrutins = this.$store.state.storeSearch.searchScrutins
         Object.keys(scrutins).sort().reverse().forEach((key) => {
           resultScrutins.push(scrutins[key])
         })
@@ -43,6 +46,7 @@
               isAdmin: false,
               isAlreadyVoted: false
             })
+            self.$store.dispatch('initSearchResult')
             self.watchPropositionCreated()
             self.watchScrutinUpdated()
           }
@@ -60,6 +64,7 @@
               isVisibleResult: scrutin._isVisibleResult,
               isOpenToProposal: scrutin._isOpenToProposal
             })
+            self.$store.dispatch('initSearchResult')
           }
         })
       },
@@ -77,6 +82,7 @@
               isAlreadyVoted: false
             })
             self.watchVoteSubmitted()
+            self.$store.dispatch('initSearchResult')
           }
         })
       },

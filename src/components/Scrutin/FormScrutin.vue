@@ -44,7 +44,7 @@
     methods: {
       submit () {
         if (this.$refs.form.validate()) {
-          if (this.isUpdateScrutin) {
+          if (this.isUpdateScrutin()) {
             EsensVote.updateScrutin(this.scrutin.scrutinId, this.name, this.isVisibleResult, this.isOpenToProposal).then(() => {
               this.$emit('isEndFormScrutin', false)
             })
