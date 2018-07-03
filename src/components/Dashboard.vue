@@ -44,7 +44,8 @@
               isOpenToProposal: scrutin._isOpenToProposal,
               propositions: {},
               isAdmin: false,
-              isAlreadyVoted: false
+              isAlreadyVoted: false,
+              isStartVoted: false
             })
             self.$store.dispatch('initSearchResult')
             self.watchPropositionCreated()
@@ -79,9 +80,27 @@
               scrutinId: proposition._scrutinId.c[0],
               description: window.web3.utils.toAscii(proposition._description),
               vote: 0,
+              isAdmin: false,
+              showUpdateProposition: false,
               isAlreadyVoted: false
             })
             self.watchVoteSubmitted()
+            self.watchPropositionUpdated()
+            self.$store.dispatch('initSearchResult')
+          }
+        })
+      },
+
+      watchPropositionUpdated () {
+        let self = this
+        EsensVote.instance.PropositionUpdated({}, {fromBlock: 0, toBlock: 'latest'}).watch(function (error, result) {
+          if (!error) {
+            let proposition = result.args
+            self.$store.commit('updateProposition', {
+              scrutinId: proposition._scrutinId.c[0],
+              propositionId: proposition._propositionId.c[0],
+              description: window.web3.utils.toAscii(proposition._description)
+            })
             self.$store.dispatch('initSearchResult')
           }
         })

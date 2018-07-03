@@ -38,8 +38,17 @@ const store = new Vuex.Store({
     addProposition (state, proposition) {
       Vue.set(state.scrutins[proposition.scrutinId].propositions, proposition.propositionId, proposition)
     },
+    updateProposition (state, proposition) {
+      let oldProposition = state.scrutins[proposition.scrutinId].propositions[proposition.propositionId]
+      Object.keys(oldProposition).forEach(key => {
+        if (proposition[key] !== undefined) {
+          oldProposition[key] = proposition[key]
+        }
+      })
+    },
     addVote (state, vote) {
       state.scrutins[vote.scrutinId].propositions[vote.propositionId].vote = vote.counter
+      state.scrutins[vote.scrutinId].isStartVoted = true
     },
     logCurrentUserVote (state, currentUserVote) {
       state.scrutins[currentUserVote.scrutinId].isAlreadyVoted = true

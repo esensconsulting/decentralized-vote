@@ -6,6 +6,7 @@ contract EsensVote {
     address scrutinOwner;
     bool isVisibleResult;
     bool isOpenToProposal;
+    bool isStartVoted;
   }
 
   struct Vote {
@@ -32,6 +33,7 @@ contract EsensVote {
   event ScrutinCreated(uint _scrutinId, bytes32 _name, address _scrutinOwner, bool _isVisibleResult, bool _isOpenToProposal);
   event ScrutinUpdated(uint _scrutinId, bytes32 _name, address _scrutinOwner, bool _isVisibleResult, bool _isOpenToProposal);
   event PropositionCreated(uint _propositionId, uint _scrutinId, bytes32 _description);
+  event PropositionUpdated(uint _propositionId, uint _scrutinId, bytes32 _description);
 
   function EsensVote() public {
     createScrutin('Presidentielle', true, false);
@@ -41,12 +43,16 @@ contract EsensVote {
   }
 
   function createScrutin(bytes32 _name, bool _isVisibleResult, bool _isOpenToProposal) public returns (uint) {
-    uint _scrutinId = scrutins.push(Scrutin(_name, msg.sender, _isVisibleResult, _isOpenToProposal)) - 1;
+    uint _scrutinId = scrutins.push(Scrutin(_name, msg.sender, _isVisibleResult, _isOpenToProposal, false)) - 1;
     emit ScrutinCreated(_scrutinId, _name, msg.sender, _isVisibleResult, _isOpenToProposal);
   }
 
   function isAdmin(uint _scrutinId) public view returns (bool) {
     return scrutins[_scrutinId].scrutinOwner == msg.sender;
+  }
+
+  function isAdminProposition(uint _propositionId) public view returns (bool) {
+    return propositions[_propositionId].scrutinOwner == msg.sender;
   }
 
   function updateScrutin(uint _scrutinId, bytes32 _name, bool _isVisibleResult, bool _isOpenToProposal) public {
@@ -65,11 +71,20 @@ contract EsensVote {
     }
   }
 
+  function updateProposition(uint _propositionId, bytes32 _description) public {
+    require(!scrutins[propositions[_propositionId].scrutinId].isStartVoted);
+    Proposition storage proposition = propositions[_propositionId];
+    require(proposition.scrutinOwner == msg.sender || scrutins[proposition.scrutinId].scrutinOwner == msg.sender);
+    proposition.description = _description;
+    emit PropositionUpdated(_propositionId, proposition.scrutinId, _description);
+  }
+
   function submitVote(uint _propositionId) public {
     Proposition storage proposition = propositions[_propositionId];
     require(isScrutinVoted[msg.sender][proposition.scrutinId] == false);
     proposition.counter++;
     votes.push(Vote(msg.sender, proposition.scrutinId, _propositionId));
+    scrutins[proposition.scrutinId].isStartVoted = true;
     isScrutinVoted[msg.sender][proposition.scrutinId] = true;
     propositionIdVotedForScrutinId[msg.sender][proposition.scrutinId] = _propositionId;
     emit VoteSubmitted(proposition.scrutinId, _propositionId, proposition.counter);

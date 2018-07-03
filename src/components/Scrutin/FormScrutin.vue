@@ -24,6 +24,7 @@
 
 <script>
   import EsensVote from '@/js/esensVote'
+  import StringUtils from '../../js/utils/StringUtils'
 
   export default {
     name: 'form-scrutin',
@@ -60,20 +61,8 @@
         this.$refs.form.reset()
       },
 
-      trimCharacter: function (strToTrim) {
-        let result = strToTrim
-        for (let i = strToTrim.length - 1; i >= 0; i--) {
-          if (result[i].charCodeAt() === 0 || result[i].charCodeAt() === 32) {
-            result = result.substring(0, result.length - 1)
-            continue
-          }
-          break
-        }
-        return result
-      },
-
       changeValueForm () {
-        this.name = this.trimCharacter(this.scrutin.name)
+        this.name = StringUtils.trimCharacter(this.scrutin.name)
         this.isVisibleResult = this.scrutin.isVisibleResult
         this.isOpenToProposal = this.scrutin.isOpenToProposal
         this.textButtonCreateScrutin = 'Modifier scrutin'

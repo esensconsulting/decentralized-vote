@@ -2,10 +2,10 @@
   <div>
     <div v-if="isCreatedProposition">
       <v-card-title>
-        <form-add-proposition
+        <form-proposition
           :scrutinId="scrutinId"
-          @isCreatedProposition="showSnackbar"
-          @closeCreateProposition="isCreatedProposition = false"></form-add-proposition>
+          @isEndFormProposition="showSnackbar"
+          @closeCreateProposition="isCreatedProposition = false"></form-proposition>
       </v-card-title>
     </div>
     <div v-else>
@@ -29,12 +29,12 @@
 </template>
 
 <script>
-  import FormAddProposition from './FormAddProposition'
+  import FormProposition from './FormProposition'
 
   export default {
     name: 'add-proposition',
     props: ['scrutinId'],
-    components: {FormAddProposition},
+    components: {FormProposition},
     data () {
       return {
         isCreatedProposition: false,

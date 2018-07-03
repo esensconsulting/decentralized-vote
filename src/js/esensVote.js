@@ -37,6 +37,19 @@ const EsensVote = {
     })
   },
 
+  isAdminProposition: function (id) {
+    let self = this
+    return new Promise((resolve, reject) => {
+      self.instance.isAdminProposition.call(id,
+        {from: Vue.prototype.$account}
+      ).then(isAdmin => {
+        resolve(isAdmin)
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+
   submitVote: function (propositionId) {
     let self = this
 
@@ -92,6 +105,22 @@ const EsensVote = {
     return new Promise((resolve, reject) => {
       self.instance.createProposal(
         scrutinId,
+        name,
+        {from: Vue.prototype.$account}
+      ).then((propositionId) => {
+        resolve(propositionId)
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+
+  updateProposition: function (propositionId, name) {
+    let self = this
+
+    return new Promise((resolve, reject) => {
+      self.instance.updateProposition(
+        propositionId,
         name,
         {from: Vue.prototype.$account}
       ).then((propositionId) => {

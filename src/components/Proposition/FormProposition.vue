@@ -1,8 +1,8 @@
 <template class="max-width">
     <v-form v-on:submit.prevent="submit" ref="form" v-model="valid" lazy-validation>
       <v-text-field
-        v-model="name"
-        :rules="nameRules"
+        v-model="description"
+        :rules="descriptionRules"
         :counter="32"
         label="Nom de la proposition"
         required
@@ -21,15 +21,16 @@
 
 <script>
   import EsensVote from '@/js/esensVote'
+  import StringUtils from '../../js/utils/StringUtils'
 
   export default {
-    name: 'form-add-proposition',
-    props: ['scrutinId'],
+    name: 'form-proposition',
+    props: ['scrutinId', 'proposition'],
     components: {},
     data: () => ({
       valid: true,
-      name: '',
-      nameRules: [
+      description: '',
+      descriptionRules: [
         v => !!v || 'Nom de la proposition est obligatoire',
         v => (v && v.length <= 32) || 'Nom de la proposition doit contenir 32 charactères maximun'
       ]
@@ -38,10 +39,16 @@
     methods: {
       submit () {
         if (this.$refs.form.validate()) {
-          EsensVote.createProposal(this.scrutinId, this.name).then(() => {
-            this.clear()
-            this.$emit('isCreatedProposition', false)
-          })
+          if (this.isUpdateProposition()) {
+            EsensVote.updateProposition(this.proposition.propositionId, this.description).then(() => {
+              this.$emit('isEndFormProposition', false)
+            })
+          } else {
+            EsensVote.createProposal(this.scrutinId, this.description).then(() => {
+              this.clear()
+              this.$emit('isEndFormProposition', false)
+            })
+          }
         }
       },
 
@@ -51,9 +58,24 @@
 
       close () {
         this.$emit('closeCreateProposition', false)
+      },
+
+      isUpdateProposition () {
+        return this.proposition !== undefined
+      },
+
+      changeValueForm () {
+        this.description = StringUtils.trimCharacter(this.proposition.description)
       }
     },
-    mounted: function () {}
+    mounted: function () {
+      let self = this
+      EsensVote.init().then(() => {
+        if (self.isUpdateProposition()) {
+          self.changeValueForm()
+        }
+      })
+    }
   }
 </script>
 

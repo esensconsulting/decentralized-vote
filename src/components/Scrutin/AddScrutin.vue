@@ -95,7 +95,7 @@
     color: #42b983;
   }
 
-  button.remove-background-btn.btn:not(.btn--icon):not(.btn--flat) {
+  button.remove-background-btn.v-btn:not(.btn--icon):not(.btn--flat) {
     i{
       font-size: 30px;
     }
