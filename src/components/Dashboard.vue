@@ -44,7 +44,8 @@
               isOpenToProposal: scrutin._isOpenToProposal,
               propositions: {},
               isAdmin: false,
-              isAlreadyVoted: false
+              isAlreadyVoted: false,
+              isStartVoted: false
             })
             self.$store.dispatch('initSearchResult')
             self.watchPropositionCreated()

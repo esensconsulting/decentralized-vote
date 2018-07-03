@@ -48,6 +48,7 @@ const store = new Vuex.Store({
     },
     addVote (state, vote) {
       state.scrutins[vote.scrutinId].propositions[vote.propositionId].vote = vote.counter
+      state.scrutins[vote.scrutinId].isStartVoted = true
     },
     logCurrentUserVote (state, currentUserVote) {
       state.scrutins[currentUserVote.scrutinId].isAlreadyVoted = true

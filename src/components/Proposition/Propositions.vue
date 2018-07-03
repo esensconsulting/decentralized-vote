@@ -18,7 +18,7 @@
               Résultat : {{proposition.vote}}
             </v-list-tile-sub-title>
           </v-list-tile-content>
-          <v-btn icon v-if="(scrutin.isAdmin || proposition.isAdmin) && proposition.showUpdateProposition == false"
+          <v-btn icon v-if="(scrutin.isAdmin || proposition.isAdmin) && proposition.showUpdateProposition == false && !scrutin.isStartVoted"
                  @click="proposition.showUpdateProposition = true">
             <v-icon>edit</v-icon>
           </v-btn>
