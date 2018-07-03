@@ -28,11 +28,19 @@ window.addEventListener('load', function () {
     window.web3.eth.getAccounts().then(accounts => {
       Vue.prototype.$account = accounts[0]
     })
+    window.web3.eth.net.getId().then(id => {
+      // see https://github.com/ethereumbook/ethereumbook/issues/110
+      // user must be connected to Ropsten or local node
+      if (id !== 3 && id < 10) {
+        alert('Veuillez vous connecter au réseau Ropsten')
+      }
+    })
     // })
   } else {
     console.log('Web3 injected browser: Fail. You should consider trying MetaMask.')
     // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
     window.web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
+    Vue.prototype.$noMetamask = true
   }
 
   /* eslint-disable no-new */

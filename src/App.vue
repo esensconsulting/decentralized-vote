@@ -40,12 +40,21 @@
       </v-list>
     </v-navigation-drawer>
     <v-toolbar dark clipped-left absolute app>
-      <v-toolbar-side-icon v-if="this.$store.state.connectedUser.isLogged" @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+      <v-toolbar-side-icon v-if="this.$store.state.connectedUser.isLogged"
+                           @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <img src="./assets/esens-logo.svg">
       <v-toolbar-title>Votesens</v-toolbar-title>
     </v-toolbar>
     <v-content>
-      <router-view></router-view>
+      <router-view v-if="!this.noMetamask"></router-view>
+      <v-container align-content-center v-if="this.noMetamask">
+        <v-flex justify-space-around class="text-md-center">
+          <h1>Veuillez installer Metamask pour utiliser l'application</h1>
+          <a target="_blank" href="http://metamask.io">
+            <img src="./assets/download-metamask-dark.png" alt="download metamask button dark" style="max-width:100%;">
+          </a>
+        </v-flex>
+      </v-container>
     </v-content>
     <v-footer app>
       <span>&copy; 2018</span>
@@ -54,11 +63,18 @@
 </template>
 
 <script>
+  import Vue from 'vue'
+
   export default {
     name: 'app',
     data: () => ({
       drawer: null
-    })
+    }),
+    computed: {
+      noMetamask () {
+        return Vue.prototype.$noMetamask
+      }
+    }
   }
 </script>
 
