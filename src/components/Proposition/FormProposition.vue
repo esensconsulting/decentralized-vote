@@ -110,13 +110,26 @@
     height: 88px;
   }
 
+  .v-list .v-input, .v-list .v-input__slot{
+    margin: 8px !important;
+  }
+
   form{
     display: flex;
     align-items: center;
     width: 100%;
   }
 
+  .v-counter {
+    margin-top: 8px !important;
+  }
+
   .max-width{
     width: 100%;
+  }
+</style>
+<style>
+  .v-list .v-input__slot{
+    margin-bottom: 8px ;
   }
 </style>
