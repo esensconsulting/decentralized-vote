@@ -1,4 +1,4 @@
-_Version English_
+_English Version_
 # Vote on Ethereum
 Decentralized voting request on the Ethereum blockchain
 
